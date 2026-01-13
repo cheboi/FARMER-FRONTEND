@@ -6,10 +6,10 @@ import {
   FiUser,
   FiMap,
   FiEye,
-  FiBell,
   FiCheckCircle,
   FiAlertTriangle,
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 import { GiPlantSeed, GiWheat, GiCow } from "react-icons/gi";
 
@@ -18,6 +18,8 @@ import api from "../api/axios";
 export default function FarmerDashboard() {
   const [farmer, setFarmer] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFarmerData();
@@ -44,15 +46,16 @@ export default function FarmerDashboard() {
           status,
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Error fetching farmer data:", err);
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        navigate("/login", { replace: true });
       });
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
 
   if (!farmer) {
@@ -85,8 +88,7 @@ export default function FarmerDashboard() {
             <FiUser /> Welcome, {farmer.firstName}
           </span>
           <button onClick={handleLogout}>
-            <FiLogOut />
-            Logout
+            <FiLogOut /> Logout
           </button>
         </div>
       </header>
@@ -152,7 +154,6 @@ export default function FarmerDashboard() {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Farmer Details</h3>
-
             <p>
               <FiUser /> <b>First Name:</b> {farmer.firstName}
             </p>
@@ -162,19 +163,15 @@ export default function FarmerDashboard() {
             <p>
               <FiMap /> <b>Farm Size:</b> {farmer.farmSize}
             </p>
-
             <p>
               <GiWheat /> <b>Crop Type:</b> {farmer.cropType || "N/A"}
             </p>
-
             <p>
               <GiCow /> <b>Livestock Type:</b> {farmer.livestockType || "N/A"}
             </p>
-
             <p>
               <b>Status:</b> {farmer.status}
             </p>
-
             <button className="close-btn" onClick={() => setShowDetails(false)}>
               Close
             </button>
@@ -202,29 +199,6 @@ function Card({ title, children }) {
     <div className="card">
       <h4>{title}</h4>
       {children}
-    </div>
-  );
-}
-
-function Progress({ status }) {
-  const steps = ["Registration", "Document Upload", "Under Review", "Approval"];
-
-  return (
-    <div className="progress">
-      {steps.map((step) => (
-        <span
-          key={step}
-          className={
-            status === "pending" && step === "Under Review"
-              ? "active"
-              : status === "certified" && step === "Approval"
-              ? "active"
-              : ""
-          }
-        >
-          {step}
-        </span>
-      ))}
     </div>
   );
 }
