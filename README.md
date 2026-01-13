@@ -5,7 +5,7 @@ system. Farmers can register, log in, and track their certification status.
 
 ## Live Site
 
-https://ukulima-farmers.vercel.app
+https://farmer-frontend-one.vercel.app/
 
 ## Features
 
